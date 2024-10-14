@@ -2,3 +2,69 @@
     background-color: #18191a;
     color: #f8f9fa;
 }
+
+.d-flex {
+    display: flex; /* Usar flexbox */
+    flex-direction: column; /* Cambiar la dirección a columna */
+    align-items: center; /* Centrar horizontalmente */
+    justify-content: center; /* Centrar verticalmente */
+}
+
+.div-words{
+    width: 410px;
+    margin-top: 20px;
+}
+
+.grid-container-words {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(6, 70px);
+    gap: 5px;
+}
+
+.grid-item-words {
+    background-color: #18191a;
+    color: rgb(255, 255, 255);
+    display: flex; /* Usar flexbox para centrar el contenido */
+    align-items: center; /* Centrar verticalmente */
+    justify-content: center; /* Centrar horizontalmente */
+    border: 3px solid rgb(85, 85, 85);
+    border-radius: 10%;
+}
+
+.div-keyboard{
+    width: 750px;
+    margin-top: 50px;
+}
+
+.grid-container-keyboard {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    grid-template-rows: repeat(3, 70px);
+    gap: 10px;
+}
+
+.grid-item-key {
+    background-color: rgb(55, 53, 64);
+    color: white;
+    display: flex; /* Usar flexbox para centrar el contenido */
+    align-items: center; /* Centrar verticalmente */
+    justify-content: center; /* Centrar horizontalmente */
+    border-radius: 10%;
+    font-size: 1.5em;
+    font-weight: 700;
+}
+
+.send-button {
+    grid-column: span 2;
+}
+
+.grid-item-key:hover {
+    background-color: #6b8198;
+}
+
+.icon {
+    margin-top: 3px;
+    width: 30px;
+    filter: brightness(0) saturate(100%) invert(100%);
+}
