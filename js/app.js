@@ -1,8 +1,9 @@
-const VOCABULARY_SIZE = 4553
+const VOCABULARY_SIZE = 1020
 const gridWords = document.querySelectorAll(".grid-item-words");
 const button = document.getElementById("button-jugar");
 const alphabet = "AaBbCcDdEeFfGgHhIiJjKkLlMmNnÑñOoPpQqRrSsTtUuVvWwXxYyZz"
 const gray = "rgb(85, 85, 85)";
+const darkGray = "rgb(35, 35, 35)"; 
 const green = "rgb(71, 209, 71)";
 const yellow = "rgb(230, 230, 0)";
 const red = "rgb(255, 0, 0)";
@@ -25,7 +26,6 @@ function resetGame() {
     current_row = 1;
     current_col = 1;
     current_item = getItem(current_row, current_col);
-    console.log(current_item)
     cleanGrid();
     colorItem(current_item);
     selectRandomWord();
@@ -89,7 +89,7 @@ function getItem(r, c) {
 
 function selectRandomWord() {
     let randomIndex = Math.floor(Math.random() * (VOCABULARY_SIZE + 1));
-    fetch('static/vocabulario_5_letras_sin_conjugaciones.txt')
+    fetch('static/palabras_elegibles.txt')
         .then(response => response.text())  // Lee el archivo como texto
         .then(data => {
             const palabras = data.split('\n');  // Divide el contenido en líneas/palabras
@@ -108,7 +108,6 @@ function cleanGrid() {
 }
 
 function colorItem(item) {
-    console.log(item);
     item.style.border = "solid #0099ff";
 }
 
@@ -128,7 +127,7 @@ function joinWord() {
 
 async function wordExists(word) {
     let exists = false;
-    const response = await fetch('static/vocabulario_5_letras_sin_conjugaciones.txt');
+    const response = await fetch('static/palabras_posibles.txt');
     const data = await response.text();
     
     const palabras = data.split('\n');  // Divide el contenido en líneas/palabras
@@ -147,15 +146,19 @@ function chechWord(word) {
     for (let i = 0; i < 5; i++) {
         let column = i + 1
         cell = document.querySelector(".grid-item-words.r" + current_row + ".c" + column);
+        keyItem = getKeyItem(word[i]);
         if (word[i] == selectedWord[i]) {
             cell.style.backgroundColor = green;
             correct_letters++;
+            keyItem.style.backgroundColor = green;
         }
         else if (word[i] != selectedWord[i] && selectedWord.includes(word[i])) {
             cell.style.backgroundColor = yellow;
+            keyItem.style.backgroundColor = darkGray;
         }
         else {
             cell.style.backgroundColor = gray;
+            keyItem.style.backgroundColor = darkGray;
         }
     }
     if (correct_letters == 5) {
@@ -190,4 +193,9 @@ function nextLine() {
     current_item = getItem(current_row, current_col);
     colorItem(current_item)
 
+}
+
+function getKeyItem(key) {
+    item = document.getElementById(key.toUpperCase() + "-button");
+    return item;
 }

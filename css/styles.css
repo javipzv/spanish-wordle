@@ -61,7 +61,7 @@
     font-weight: 700;
 }
 
-.send-button {
+#send-button {
     grid-column: span 2;
 }
 
