@@ -154,7 +154,7 @@ function chechWord(word) {
         }
         else if (word[i] != selectedWord[i] && selectedWord.includes(word[i])) {
             cell.style.backgroundColor = yellow;
-            keyItem.style.backgroundColor = darkGray;
+            keyItem.style.backgroundColor = yellow;
         }
         else {
             cell.style.backgroundColor = gray;
@@ -167,7 +167,7 @@ function chechWord(word) {
     }
     else {
         if (current_row == 6) {
-            showMessage("Vaya, no has acertado. La palabra correcta era " + selectedWord.toUpperCase(), red, 5000);
+            showMessage("Vaya, no has acertado. La palabra correcta era " + selectedWord.toUpperCase() + ".", red, 5000);
             playing = false;
         }
         else
