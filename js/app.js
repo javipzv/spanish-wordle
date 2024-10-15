@@ -123,10 +123,11 @@ async function wordExists(word) {
 }
 
 function chechWord(word) {
-    for (let i = 1; i < 6; i++) {
+    for (let i = 0; i < 5; i++) {
         console.log(word, selectedWord);
         console.log(".grid-item-words.r" + current_row + ".c" + i+1)
-        cell = document.querySelector(".grid-item-words.r" + current_row + ".c" + );
+        let column = i + 1
+        cell = document.querySelector(".grid-item-words.r" + current_row + ".c" + column);
         // console.log(cell);
         console.log(word[i], selectedWord[i]);
         if (word[i] == selectedWord[i]) {
@@ -139,4 +140,5 @@ function chechWord(word) {
             cell.style.backgroundColor = gray;
         }
     }
+    current_col++;
 }
