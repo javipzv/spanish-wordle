@@ -34,6 +34,8 @@
     justify-content: center; /* Centrar horizontalmente */
     border: 3px solid rgb(85, 85, 85);
     border-radius: 10%;
+    font-size: 30px;
+    font-weight: 700;
 }
 
 .div-keyboard{
