@@ -4,7 +4,9 @@ const button = document.getElementById("button-jugar");
 const alphabet = "AaBbCcDdEeFfGgHhIiJjKkLlMmNnÑñOoPpQqRrSsTtUuVvWwXxYyZz"
 const gray = "rgb(85, 85, 85)";
 const green = "rgb(71, 209, 71)";
-const yellow = "rgb(255, 255, 102)";
+const yellow = "rgb(230, 230, 0)";
+const red = "rgb(255, 0, 0)";
+const background_color = "#18191a";
 const message = document.getElementById("message")
 
 let selectedWord = "";
@@ -23,8 +25,9 @@ function resetGame() {
     current_row = 1;
     current_col = 1;
     current_item = getItem(current_row, current_col);
-    colorItem(current_item);
+    console.log(current_item)
     cleanGrid();
+    colorItem(current_item);
     selectRandomWord();
     document.addEventListener('keydown', handleKeyPress);
 }
@@ -49,14 +52,13 @@ function handleKeyPress(event) {
                     .then(exists => {
                         if (exists) {
                             chechWord(createdWord);
-                            nextLine();
                         } else {
-                            showMessage("La palabra introducida no existe.");
+                            showMessage("La palabra introducida no existe.", red, 2000);
                         }
                     });
             }
             else {
-                showMessage("La palabra introducida no tiene 5 letras.");
+                showMessage("La palabra introducida no tiene 5 letras.", red, 2000);
             }
         }
         if (event.key === "Backspace") {
@@ -100,10 +102,13 @@ function cleanGrid() {
     for (let i = 0; i < gridWords.length; i++) {
         let element = gridWords[i];
         element.textContent = "";
+        element.style.backgroundColor = background_color;
+        element.style.border = "solid rgb(85, 85, 85)";
     }
 }
 
 function colorItem(item) {
+    console.log(item);
     item.style.border = "solid #0099ff";
 }
 
@@ -138,11 +143,13 @@ async function wordExists(word) {
 }
 
 function chechWord(word) {
+    let correct_letters = 0;
     for (let i = 0; i < 5; i++) {
         let column = i + 1
         cell = document.querySelector(".grid-item-words.r" + current_row + ".c" + column);
         if (word[i] == selectedWord[i]) {
             cell.style.backgroundColor = green;
+            correct_letters++;
         }
         else if (word[i] != selectedWord[i] && selectedWord.includes(word[i])) {
             cell.style.backgroundColor = yellow;
@@ -151,14 +158,29 @@ function chechWord(word) {
             cell.style.backgroundColor = gray;
         }
     }
+    if (correct_letters == 5) {
+        showMessage("¡Felicidades! Has acertado la palabra.", green, 5000);
+        playing = false;
+    }
+    else {
+        if (current_row == 6) {
+            showMessage("Vaya, no has acertado. La palabra correcta era " + selectedWord.toUpperCase(), red, 5000);
+            playing = false;
+        }
+        else
+        {
+            nextLine();
+        }
+    }
 }
 
-function showMessage(message_text) {
+function showMessage(message_text, color, time) {
     message.style.display = "block";
     message.textContent = message_text;
+    message.style.backgroundColor = color;
     setTimeout(function() {
         message.style.display = "none";
-    }, 2000);
+    }, time);
 }
 
 function nextLine() {
