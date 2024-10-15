@@ -5,6 +5,7 @@ const alphabet = "AaBbCcDdEeFfGgHhIiJjKkLlMmNnÑñOoPpQqRrSsTtUuVvWwXxYyZz"
 const gray = "rgb(85, 85, 85)";
 const green = "rgb(71, 209, 71)";
 const yellow = "rgb(255, 255, 102)";
+const message = document.getElementById("message")
 
 let selectedWord = "";
 let playing;
@@ -21,7 +22,7 @@ function resetGame() {
     playing = true;
     current_row = 1;
     current_col = 1;
-    current_item = getCurrentItem(current_row, current_col);
+    current_item = getItem(current_row, current_col);
     colorItem(current_item);
     cleanGrid();
     selectRandomWord();
@@ -31,41 +32,55 @@ function resetGame() {
 function handleKeyPress(event) {
     if (playing) {
         if (alphabet.includes(event.key)) {
-            current_item = getCurrentItem(current_row, current_col);
+            current_item = getItem(current_row, current_col);
             current_item.textContent = event.key.toUpperCase();
             if (current_col < 5){
                 current_col++;
-                next_item = getCurrentItem(current_row, current_col);
+                next_item = getItem(current_row, current_col);
                 colorItem(next_item);
             }
             decolorItem(current_item);
         }
         if (event.key === "Enter") {
-            createdWord = joinWord();
-            if (wordExists(createdWord)) {
-                chechWord(createdWord)
-            };
+            last_item = getItem(current_row, 5);
+            if (last_item.textContent != "") {
+                createdWord = joinWord();
+                wordExists(createdWord)
+                    .then(exists => {
+                        if (exists) {
+                            chechWord(createdWord);
+                            nextLine();
+                        } else {
+                            showMessage("La palabra introducida no existe.");
+                        }
+                    });
+            }
+            else {
+                showMessage("La palabra introducida no tiene 5 letras.");
+            }
         }
         if (event.key === "Backspace") {
-            current_item = getCurrentItem(current_row, current_col);
-            if (current_item.textContent === "" && current_col > 0) {
+            current_item = getItem(current_row, current_col);
+            if (current_item.textContent === "" && current_col > 1) {
                 current_col--;
-                next_item = getCurrentItem(current_row, current_col);
+                next_item = getItem(current_row, current_col);
                 colorItem(next_item);
                 decolorItem(current_item);
             }
             else {
                 current_item.textContent = "";
-                current_col--;
-                next_item = getCurrentItem(current_row, current_col);
-                colorItem(next_item);
-                decolorItem(current_item);
+                if (current_col > 1) {
+                    current_col--;
+                    next_item = getItem(current_row, current_col);
+                    colorItem(next_item);
+                    decolorItem(current_item);
+                }
             }
         }
     }
 }
 
-function getCurrentItem(r, c) {
+function getItem(r, c) {
     let strPos = ".r" + r + ".c" + c;
     return document.querySelector(strPos);
 }
@@ -124,12 +139,8 @@ async function wordExists(word) {
 
 function chechWord(word) {
     for (let i = 0; i < 5; i++) {
-        console.log(word, selectedWord);
-        console.log(".grid-item-words.r" + current_row + ".c" + i+1)
         let column = i + 1
         cell = document.querySelector(".grid-item-words.r" + current_row + ".c" + column);
-        // console.log(cell);
-        console.log(word[i], selectedWord[i]);
         if (word[i] == selectedWord[i]) {
             cell.style.backgroundColor = green;
         }
@@ -140,5 +151,21 @@ function chechWord(word) {
             cell.style.backgroundColor = gray;
         }
     }
-    current_col++;
+}
+
+function showMessage(message_text) {
+    message.style.display = "block";
+    message.textContent = message_text;
+    setTimeout(function() {
+        message.style.display = "none";
+    }, 2000);
+}
+
+function nextLine() {
+    decolorItem(current_item);
+    current_row++;
+    current_col = 1;
+    current_item = getItem(current_row, current_col);
+    colorItem(current_item)
+
 }
