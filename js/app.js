@@ -2,6 +2,9 @@ const VOCABULARY_SIZE = 4553
 const gridWords = document.querySelectorAll(".grid-item-words");
 const button = document.getElementById("button-jugar");
 const alphabet = "AaBbCcDdEeFfGgHhIiJjKkLlMmNnÑñOoPpQqRrSsTtUuVvWwXxYyZz"
+const gray = "rgb(85, 85, 85)";
+const green = "rgb(71, 209, 71)";
+const yellow = "rgb(255, 255, 102)";
 
 let selectedWord = "";
 let playing;
@@ -122,11 +125,18 @@ async function wordExists(word) {
 function chechWord(word) {
     for (let i = 1; i < 6; i++) {
         console.log(word, selectedWord);
-        let eo = true;
-        if (word[i] == selectedWord[i] || eo) {
-            cell = document.querySelector(".grid-item-words.r" + i + ".c" + current_col);
-            cell.style.backgroundColor = "solid rgb(245, 85, 85)"
+        console.log(".grid-item-words.r" + current_row + ".c" + i+1)
+        cell = document.querySelector(".grid-item-words.r" + current_row + ".c" + );
+        // console.log(cell);
+        console.log(word[i], selectedWord[i]);
+        if (word[i] == selectedWord[i]) {
+            cell.style.backgroundColor = green;
         }
-        
+        else if (word[i] != selectedWord[i] && selectedWord.includes(word[i])) {
+            cell.style.backgroundColor = yellow;
+        }
+        else {
+            cell.style.backgroundColor = gray;
+        }
     }
 }
