@@ -1,5 +1,6 @@
 const VOCABULARY_SIZE = 1020
 const gridWords = document.querySelectorAll(".grid-item-words");
+const gridKeys = document.querySelectorAll(".grid-item-key");
 const button = document.getElementById("button-jugar");
 const alphabet = "AaBbCcDdEeFfGgHhIiJjKkLlMmNnÑñOoPpQqRrSsTtUuVvWwXxYyZz"
 const gray = "rgb(85, 85, 85)";
@@ -29,14 +30,31 @@ function resetGame() {
     cleanGrid();
     colorItem(current_item);
     selectRandomWord();
-    document.addEventListener('keydown', handleKeyPress);
+    document.addEventListener('keydown', handleKeyPressed);
+    document.addEventListener('click', handleKeyClicked)
 }
 
-function handleKeyPress(event) {
+function handleKeyClicked(event) {
+    const clickedElement = event.target;
+    let buttonText = "";
+    if (clickedElement.classList.contains("grid-item-key") || clickedElement.classList.contains("delete-icon")) {
+        buttonText = clickedElement.textContent.trim();
+        if (buttonText === "") {
+            buttonText = "Borrar"; 
+        }
+    }
+    handleKey(buttonText);
+}
+
+function handleKeyPressed(event) {
+    handleKey(event.key);
+}
+
+function handleKey(input) {
     if (playing) {
-        if (alphabet.includes(event.key)) {
+        if (input != "" && alphabet.includes(input)) {
             current_item = getItem(current_row, current_col);
-            current_item.textContent = event.key.toUpperCase();
+            current_item.textContent = input.toUpperCase();
             if (current_col < 5){
                 current_col++;
                 next_item = getItem(current_row, current_col);
@@ -44,14 +62,14 @@ function handleKeyPress(event) {
             }
             decolorItem(current_item);
         }
-        if (event.key === "Enter") {
+        if (input === "Enter" || input === "Enviar") {
             last_item = getItem(current_row, 5);
             if (last_item.textContent != "") {
                 createdWord = joinWord();
                 wordExists(createdWord)
                     .then(exists => {
                         if (exists) {
-                            chechWord(createdWord);
+                            checkWord(createdWord);
                         } else {
                             showMessage("La palabra introducida no existe.", red, 2000);
                         }
@@ -61,7 +79,7 @@ function handleKeyPress(event) {
                 showMessage("La palabra introducida no tiene 5 letras.", red, 2000);
             }
         }
-        if (event.key === "Backspace") {
+        if (input === "Backspace" || input === "Borrar") {
             current_item = getItem(current_row, current_col);
             if (current_item.textContent === "" && current_col > 1) {
                 current_col--;
@@ -94,6 +112,7 @@ function selectRandomWord() {
         .then(data => {
             const palabras = data.split('\n');  // Divide el contenido en líneas/palabras
             selectedWord = palabras[randomIndex].trim();  // Elimina posibles espacios en blanco
+            selectedWord = "perla";
         });
     playing = true;
 }
@@ -104,6 +123,11 @@ function cleanGrid() {
         element.textContent = "";
         element.style.backgroundColor = background_color;
         element.style.border = "solid rgb(85, 85, 85)";
+    }
+
+    for (let i = 0; i < gridKeys.length; i++) {
+        const element = gridKeys[i];
+        element.style.backgroundColor = "rgb(55, 53, 64)";
     }
 }
 
@@ -141,35 +165,66 @@ async function wordExists(word) {
     return exists;
 }
 
-function chechWord(word) {
+function checkWord(word) {
+    // Find out which letters match.
     let correct_letters = 0;
+    let lettersQuantities = {};
+
     for (let i = 0; i < 5; i++) {
         let column = i + 1
         cell = document.querySelector(".grid-item-words.r" + current_row + ".c" + column);
         keyItem = getKeyItem(word[i]);
+
+        // Letter matched
         if (word[i] == selectedWord[i]) {
             cell.style.backgroundColor = green;
-            correct_letters++;
             keyItem.style.backgroundColor = green;
+            correct_letters++;
         }
-        else if (word[i] != selectedWord[i] && selectedWord.includes(word[i])) {
-            cell.style.backgroundColor = yellow;
-            keyItem.style.backgroundColor = yellow;
-        }
+        
+        // Letter not matched. 
         else {
-            cell.style.backgroundColor = gray;
-            keyItem.style.backgroundColor = darkGray;
+            lettersQuantities[selectedWord[i]]++;
         }
     }
+
+    // Paint keys
+    for (let i = 0; i < 5; i++) {
+        let column = i + 1
+        cell = document.querySelector(".grid-item-words.r" + current_row + ".c" + column);
+        keyItem = getKeyItem(word[i]);
+        if (word[i] != selectedWord[i]) {
+            if (word[i] in lettersQuantities) {
+                cell.style.backgroundColor = yellow;
+                if (keyItem.style.backgroundColor != green) {
+                    keyItem.style.backgroundColor = yellow;
+                }
+            }
+            else {
+                cell.style.backgroundColor = gray;
+                if (keyItem.style.backgroundColor != green && keyItem.style.backgroundColor != yellow) {
+                    keyItem.style.backgroundColor = darkGray;
+                }
+            }
+        }
+    }
+
+    // Every letter is matched!
     if (correct_letters == 5) {
         showMessage("¡Felicidades! Has acertado la palabra.", green, 5000);
         playing = false;
     }
+
+    // Not all the letters are matched.
     else {
+
+        // It was the last attempt.
         if (current_row == 6) {
             showMessage("Vaya, no has acertado. La palabra correcta era " + selectedWord.toUpperCase() + ".", red, 5000);
             playing = false;
         }
+
+        // Next attempt...
         else
         {
             nextLine();
