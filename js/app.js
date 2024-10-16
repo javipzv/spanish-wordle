@@ -17,11 +17,13 @@ let current_row = 1;
 let current_col = 1;
 let current_item;
 
+// Add Event listeners
 button.addEventListener("click", function(event) {
     button.blur();
     resetGame();
 });
 
+// Initialize the game
 function resetGame() {
     playing = true;
     current_row = 1;
@@ -34,6 +36,7 @@ function resetGame() {
     document.addEventListener('click', handleKeyClicked)
 }
 
+// Handle key buttons events
 function handleKeyClicked(event) {
     const clickedElement = event.target;
     let buttonText = "";
@@ -46,10 +49,12 @@ function handleKeyClicked(event) {
     handleKey(buttonText);
 }
 
+// Handle key pressed events
 function handleKeyPressed(event) {
     handleKey(event.key);
 }
 
+// Handle logic for key events
 function handleKey(input) {
     if (playing) {
         if (input != "" && alphabet.includes(input)) {
@@ -100,11 +105,13 @@ function handleKey(input) {
     }
 }
 
+// Get HTML element by row and column
 function getItem(r, c) {
     let strPos = ".r" + r + ".c" + c;
     return document.querySelector(strPos);
 }
 
+// Select a random word from the vocabulary
 function selectRandomWord() {
     let randomIndex = Math.floor(Math.random() * (VOCABULARY_SIZE + 1));
     fetch('static/palabras_elegibles.txt')
@@ -117,6 +124,7 @@ function selectRandomWord() {
     playing = true;
 }
 
+// Clean the grid for a new game
 function cleanGrid() {
     for (let i = 0; i < gridWords.length; i++) {
         let element = gridWords[i];
@@ -131,14 +139,17 @@ function cleanGrid() {
     }
 }
 
+// Color the current item
 function colorItem(item) {
     item.style.border = "solid #0099ff";
 }
 
+// Decolor the last item selected
 function decolorItem(item) {
     item.style.border = "solid rgb(85, 85, 85)";
 }
 
+// Join the word from the current row
 function joinWord() {
     fullRow = document.querySelectorAll(".grid-item-words.r" + current_row);
     let newWord = "";
@@ -149,6 +160,7 @@ function joinWord() {
     return newWord.toLowerCase();
 }
 
+// Check if the word exists in the vocabulary
 async function wordExists(word) {
     let exists = false;
     const response = await fetch('static/palabras_posibles.txt');
@@ -165,6 +177,7 @@ async function wordExists(word) {
     return exists;
 }
 
+// Check if the word is correct and paint the result
 function checkWord(word) {
     // Find out which letters match.
     let correct_letters = 0;
@@ -232,6 +245,7 @@ function checkWord(word) {
     }
 }
 
+// Show a message for a certain time
 function showMessage(message_text, color, time) {
     message.style.display = "block";
     message.textContent = message_text;
@@ -241,15 +255,16 @@ function showMessage(message_text, color, time) {
     }, time);
 }
 
+// Move to the next line
 function nextLine() {
     decolorItem(current_item);
     current_row++;
     current_col = 1;
     current_item = getItem(current_row, current_col);
     colorItem(current_item)
-
 }
 
+// Get the key item by key
 function getKeyItem(key) {
     item = document.getElementById(key.toUpperCase() + "-button");
     return item;
