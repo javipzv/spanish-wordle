@@ -119,7 +119,6 @@ function selectRandomWord() {
         .then(data => {
             const palabras = data.split('\n');  // Divide el contenido en líneas/palabras
             selectedWord = palabras[randomIndex].trim();  // Elimina posibles espacios en blanco
-            selectedWord = "perla";
         });
     playing = true;
 }
